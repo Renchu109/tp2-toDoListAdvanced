@@ -1,8 +1,7 @@
+import Backlog from './components/Screens/backlog.tsx';
+
 function App() {
-    return (
-        <>
-          <h1>Trabajo Práctico 2: To do list avanzado</h1>
-        </>
-    )
+  return <Backlog />;
 }
-export default App
+
+export default App;

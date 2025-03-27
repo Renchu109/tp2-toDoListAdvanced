@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "bdDev": "npx json-server --watch db.json --port 3000",
+    "bdDev": "npx json-server --watch db.json --port 3001",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -30,5 +30,9 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "author": "",
+  "license": "ISC"
 }

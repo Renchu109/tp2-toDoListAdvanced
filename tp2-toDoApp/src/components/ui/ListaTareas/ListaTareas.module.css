@@ -1,0 +1,35 @@
+.taskTable {
+    background-color: transparent;
+  }
+  
+  .taskHeader {
+    margin-top: 3%;
+    display: flex;
+    padding: 10px;
+    color: #fff;
+  }
+  
+  .taskHeader span {
+    flex: 1;
+  }
+  
+  .taskRow {
+    background-color: #5B5151;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #fff;
+  }
+  
+  .taskRow span {
+    flex: 1;
+  }
+  
+  .taskIcons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .taskIcons i {
+    cursor: pointer;
+  }
