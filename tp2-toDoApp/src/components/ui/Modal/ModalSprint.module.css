@@ -1,0 +1,67 @@
+.containerPrincipalModalSprint{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: brightness(90%) blur(2px);
+}
+
+.contentPopUp{
+    background-color: #fff;
+    box-shadow: 5px 2px 10px #585858;
+    width: 35vw;
+    padding: 1rem;
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.contentPopUp h3 {
+    color: #333; 
+    font-size: 1.5rem; 
+    font-weight: bold; 
+    text-align: center; 
+    margin-bottom: 1rem;
+}
+
+.formContent{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 1rem;
+}
+
+.formContent input, textarea{
+    width: 100%;
+    padding: 0.3rem;
+    resize: none;
+    margin: 0.4rem 0;
+    
+}
+
+.buttonCard{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.buttonCard button:first-child {
+    background-color: #ff6b6b;
+    color: white;
+    width: 100px;
+    height: 30px;
+}
+
+.buttonCard button:last-child {
+    background-color: #5076f1;
+    color: white;
+    width: 100px;
+    height: 30px;
+}

@@ -33,3 +33,14 @@
   .taskIcons i {
     cursor: pointer;
   }
+
+  .iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .iconButton:hover svg {
+    stroke: #5076f1; /* Cambia el color al pasar el mouse */
+  }
+  
