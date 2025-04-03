@@ -8,6 +8,7 @@
     width: 100vw;
     height: 100vh;
     backdrop-filter: brightness(90%) blur(2px);
+    z-index: 1000;
 }
 
 .contentPopUp{
@@ -36,14 +37,25 @@
     flex-direction: column;
     justify-content: space-around;
     gap: 1rem;
+    width: 100%;
 }
 
-.formContent input, textarea{
+.formContent input, .formContent textarea{
     width: 100%;
     padding: 0.3rem;
     resize: none;
     margin: 0.4rem 0;
-    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.formSelect {
+    width: 100%;
+    padding: 0.3rem;
+    margin: 0.4rem 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
 }
 
 .buttonCard{
@@ -57,6 +69,9 @@
     color: white;
     width: 100px;
     height: 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .buttonCard button:last-child {
@@ -64,4 +79,7 @@
     color: white;
     width: 100px;
     height: 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }

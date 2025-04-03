@@ -10,6 +10,7 @@ interface ITareaStore {
     agregarNuevaTarea: (nuevaTarea: ITarea) => void
     editarUnaTarea: (tareaActualizada: ITarea) => void
     eliminarUnaTarea: (idTarea: string) => void
+    actualizarTarea: (tarea: ITarea) => void;
 }
 
 
@@ -19,22 +20,21 @@ export const tareaStore = create<ITareaStore>((set) => ({
     tareas:[],
     tareaActiva: null,
 
-    //funciones modificadoras para el array
 
-    //agregar array de tareas
+    actualizarTarea: (tarea) => set((state) => ({
+        tareas: state.tareas.map((t) => (t.id === tarea.id ? tarea : t)),
+      })),
+
     setArrayTareas: (arrayDeTareas) => set(() => ({tareas:arrayDeTareas})),
 
-    //agregar una tarea al array
     agregarNuevaTarea: (nuevaTarea) => set((state) => ({tareas: [... state.tareas, nuevaTarea]})),
 
-    //editar una tarea del array
     editarUnaTarea: (tareaEditada) => set((state) => {
         const arregloTareas = state.tareas.map((tarea) => tarea.id === tareaEditada.id ? {...tarea, ...tareaEditada}: tarea)
 
         return {tareas: arregloTareas}
     }),
 
-    //eliminar una tarea del array
     eliminarUnaTarea: (idTarea) => set((state) => {
     const arregloTareas = state.tareas.filter((tarea) => {
         console.log(`Comparando ${tarea.id} con ${idTarea}`);
@@ -44,6 +44,7 @@ export const tareaStore = create<ITareaStore>((set) => ({
     return { tareas: arregloTareas };
 }),
 
-    //setear la tarea activa
     setTareaActiva: (tareaActivaIn) => set(() => ({tareaActiva: tareaActivaIn}))
 }))
+
+

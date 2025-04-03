@@ -1,12 +1,10 @@
 import axios from "axios";
 import { ITarea } from "../types/iTareas";
-
-const API_URL = "http://localhost:3001/tareas";
-
+import { URL_BACKLOG } from "../utils/constantes";
 
 export const getAllTareas = async () => {
     try {
-        const response = await axios.get<ITarea[]>(API_URL)
+        const response = await axios.get<ITarea[]>(URL_BACKLOG)
 
         return response.data
     } catch (error) {
@@ -17,7 +15,7 @@ export const getAllTareas = async () => {
 
 export const postNuevaTarea = async (nuevaTarea: ITarea) => {
     try {
-        const response = await axios.post<ITarea>(API_URL, {
+        const response = await axios.post<ITarea>(URL_BACKLOG, {
             ...nuevaTarea,
         })
 
@@ -30,7 +28,7 @@ export const postNuevaTarea = async (nuevaTarea: ITarea) => {
 
 export const editarTarea = async (tareaActualizada: ITarea) => {
     try {
-        const response = await axios.put<ITarea>(`${API_URL}/${tareaActualizada.id}`, {
+        const response = await axios.put<ITarea>(`${URL_BACKLOG}/${tareaActualizada.id}`, {
             ...tareaActualizada,
         })
 
@@ -43,7 +41,7 @@ export const editarTarea = async (tareaActualizada: ITarea) => {
 
 export const eliminarTareaPorId = async (idTarea: string) => {
     try {
-        const response = await axios.delete<ITarea>(`${API_URL}/${idTarea}`)
+        const response = await axios.delete<ITarea>(`${URL_BACKLOG}/${idTarea}`)
 
         return response.data
     } catch (error) {

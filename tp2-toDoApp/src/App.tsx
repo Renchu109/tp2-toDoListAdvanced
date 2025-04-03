@@ -1,7 +1,10 @@
-import Backlog from './components/Screens/backlog.tsx';
+import { AppRoutes } from './routes/AppRoutes.tsx';
 
-function App() {
-  return <Backlog />;
-}
+const App: React.FC = () => {
+  return (
+    <AppRoutes/>
+  );
+};
+
 
 export default App;

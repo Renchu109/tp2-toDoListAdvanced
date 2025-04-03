@@ -1,0 +1,113 @@
+.sprintListContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .headerContainer h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .createSprintButton {
+    background-color: #5076f1;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .createSprintButton:hover {
+    background-color: #3a5cce;
+  }
+  
+  .sprintList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+  }
+  
+  .sprintItem {
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .sprintItem:hover {
+    background-color: #333333;
+  }
+  
+  .activeSprintItem {
+    background-color: #5076f1;
+    color: white;
+  }
+  
+  .activeSprintItem:hover {
+    background-color: #3a5cce;
+  }
+  
+  .sprintInfo {
+    flex: 1;
+  }
+  
+  .sprintTitle {
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  
+  .sprintDates {
+    font-size: 12px;
+    color: #aaa;
+  }
+  
+  .activeSprintItem .sprintDates {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .sprintActions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .iconButton {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+  }
+  
+  .iconButton:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .noSprints {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-style: italic;
+  }

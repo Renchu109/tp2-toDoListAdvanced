@@ -19,22 +19,17 @@ export const sprintStore = create<ISprintStore>((set) => ({
     sprints:[],
     sprintActiva: null,
 
-    //funciones modificadoras para el array
-
-    //agregar array de sprints
+    
     setArraySprints: (arrayDeSprints) => set(() => ({sprints:arrayDeSprints})),
 
-    //agregar una sprint al array
     agregarNuevaSprint: (nuevaSprint) => set((state) => ({sprints: [... state.sprints, nuevaSprint]})),
 
-    //editar una sprint del array
     editarUnaSprint: (sprintEditada) => set((state) => {
         const arregloSprints = state.sprints.map((sprint) => sprint.id === sprintEditada.id ? {...sprint, ...sprintEditada}: sprint)
 
         return {sprints: arregloSprints}
     }),
 
-    //eliminar una sprint del array
     eliminarUnaSprint: (idSprint) => set((state) => {
     const arregloSprints = state.sprints.filter((sprint) => {
         console.log(`Comparando ${sprint.id} con ${idSprint}`);
@@ -44,6 +39,5 @@ export const sprintStore = create<ISprintStore>((set) => ({
     return { sprints: arregloSprints };
 }),
 
-    //setear la sprint activa
     setSprintActiva: (sprintActivaIn) => set(() => ({sprintActiva: sprintActivaIn}))
 }))

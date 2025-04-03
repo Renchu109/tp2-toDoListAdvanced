@@ -1,0 +1,20 @@
+.sprintContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #121212;
+    color: #fff;
+  }
+  
+  .sidebar {
+    width: 400px;
+    background-color: #1E1E1E;
+    padding: 20px;
+    border-right: 1px solid #FFFFFF;
+  }
+  
+  .mainContent {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #121212;
+    overflow: auto;
+  }

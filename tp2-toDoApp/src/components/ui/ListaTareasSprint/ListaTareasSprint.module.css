@@ -1,0 +1,108 @@
+.taskTable {
+  background-color: transparent;
+  flex: 1;
+  height: 100%;
+}
+
+.columnContainer {
+  display: flex;
+  gap: 16px;
+  height: calc(100vh - 180px);
+  margin-top: 20px;
+}
+
+.column {
+  flex: 1;
+  background-color: #2e2e2e;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+}
+
+.columnHeader {
+  background-color: #3a3a3a;
+  padding: 12px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.columnHeader h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  color: #fff;
+}
+
+.columnContent {
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskRow {
+  background-color: #5B5151;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.taskTitle {
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskIcons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: white;
+}
+
+.iconButton:hover svg {
+  stroke: #5076f1;
+}
+
+.moveButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #ffcc00;
+}
+
+.moveButton:hover svg {
+  stroke: #ffdd33;
+}
+
+.emptyMessage {
+  color: #999;
+  text-align: center;
+  padding: 20px 10px;
+  font-style: italic;
+}
+
+.noSprintSelected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  color: #999;
+  font-size: 16px;
+}

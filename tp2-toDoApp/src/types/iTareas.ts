@@ -3,4 +3,6 @@ export interface ITarea{
     titulo:string
     descripcion:string
     fechaLimite:string
+    sprintId?: string
+    estado: 'pendiente' | 'en_curso' | 'terminado'
 }

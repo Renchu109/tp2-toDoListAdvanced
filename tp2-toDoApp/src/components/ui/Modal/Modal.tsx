@@ -3,6 +3,7 @@ import { tareaStore } from "../../../store/tareaStore";
 import styles from "./Modal.module.css";
 import { ITarea } from "../../../types/iTareas";
 import { useTareas } from "../../../hooks/useTareas";
+import { sprintStore } from "../../../store/sprintStore";
 
 type IModal = {
     handleCloseModal: VoidFunction
@@ -11,7 +12,9 @@ type IModal = {
 const initialState:ITarea = {
     titulo:'',
     descripcion:'',
-    fechaLimite:''
+    fechaLimite:'',
+    sprintId: '',
+    estado: 'pendiente'
 }
 
 export const Modal: FC<IModal> = ({handleCloseModal}) => {
@@ -20,18 +23,20 @@ export const Modal: FC<IModal> = ({handleCloseModal}) => {
 
     const setTareaActiva = tareaStore((state) => state.setTareaActiva)
 
+    const sprints = sprintStore((state) => state.sprints)
+
     const {createTarea, putTareaEditar} = useTareas()
 
     const [formValues, setFormValues] = useState<ITarea>(initialState)
+
 
     useEffect(() => {
         if(tareaActiva) setFormValues(tareaActiva);
     },[])
 
-    const handleChange = (e:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const {name,value} = e.target
-
-        setFormValues((prev) => ({...prev, [`${name}`]:value}))
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target
+        setFormValues((prev) => ({ ...prev, [`${name}`]: value }))
     }
 
     const handleSubmit = (e:FormEvent) => {
@@ -60,6 +65,33 @@ export const Modal: FC<IModal> = ({handleCloseModal}) => {
                         <textarea placeholder="Ingrese una descripción" required onChange={handleChange} value={formValues.descripcion} name="descripcion"></textarea>
 
                         <input type="date" required onChange={handleChange} value={formValues.fechaLimite} autoComplete="off" name="fechaLimite"/>
+                        <select 
+                            name="sprintId" 
+                            value={formValues.sprintId || ''} 
+                            onChange={handleChange}
+                            required
+                            className={styles.sprintSelect}
+                        >
+                            <option value="" disabled>Seleccionar Sprint</option>
+                            {sprints.map(sprint => (
+                                <option key={sprint.id} value={sprint.id}>
+                                    {sprint.titulo}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select 
+                            name="estado" 
+                            value={formValues.estado} 
+                            onChange={handleChange}
+                            className={styles.formSelect}
+                        >
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_curso">En curso</option>
+                            <option value="terminado">Terminado</option>
+                        </select>
+                    
+                    
                     </div>
 
                     <div className={styles.buttonCard}>
