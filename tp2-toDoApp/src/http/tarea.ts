@@ -28,15 +28,21 @@ export const postNuevaTarea = async (nuevaTarea: ITarea) => {
 
 export const editarTarea = async (tareaActualizada: ITarea) => {
     try {
-        const response = await axios.put<ITarea>(`${URL_BACKLOG}/${tareaActualizada.id}`, {
-            ...tareaActualizada,
-        })
+        const response = await axios.put(`${URL_BACKLOG}/${tareaActualizada.id}`, {
+            titulo: tareaActualizada.titulo,
+            descripcion: tareaActualizada.descripcion,
+            fechaLimite: tareaActualizada.fechaLimite,
+            sprintId: tareaActualizada.sprintId, 
+            estado: tareaActualizada.estado,   
+        });
 
-        return response.data
+        return response.data;
     } catch (error) {
-        console.log(error);
+        console.log("Error al actualizar la tarea:", error);
+        throw error; 
     }
-}
+};
+
 
 
 export const eliminarTareaPorId = async (idTarea: string) => {

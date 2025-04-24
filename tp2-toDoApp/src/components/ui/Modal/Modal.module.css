@@ -83,3 +83,20 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+.viewField p { 
+    color: #5076f1;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 25px;
+    padding: 10px;
+}
+
+.viewField label {
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 18px;
+}

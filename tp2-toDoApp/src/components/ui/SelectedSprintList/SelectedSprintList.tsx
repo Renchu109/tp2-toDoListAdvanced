@@ -48,7 +48,10 @@ const SprintList: React.FC = () => {
         <h2>Sprints</h2>
         <button 
           className={styles.createSprintButton} 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setSprintActiva(null); 
+            setIsModalOpen(true);
+          }}
         >
           + Nuevo Sprint
         </button>

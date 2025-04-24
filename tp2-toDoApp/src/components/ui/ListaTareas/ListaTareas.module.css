@@ -1,42 +1,86 @@
 .taskTable {
-    background-color: transparent;
-  }
-  
-  .taskHeader {
-    margin-top: 3%;
-    display: flex;
-    padding: 10px;
-    color: #fff;
-  }
-  
-  .taskHeader span {
-    flex: 1;
-  }
-  
-  .taskRow {
-    background-color: #5B5151;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #fff;
-  }
-  
-  .taskRow span {
-    flex: 1;
-  }
-  
-  .taskIcons {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .taskIcons i {
-    cursor: pointer;
-  }
+  background-color: transparent;
+}
 
-  .iconButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-  }
+.taskHeader {
+  margin-top: 3%;
+  display: flex;
+  padding: 10px;
+  color: #fff;
+  align-items: center;
+}
+
+.taskHeader span {
+  flex: 1;
+}
+
+
+.taskHeader::after {
+  content: "";
+  width: 220px; 
+}
+
+.taskRow {
+  background-color: #5B5151;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #fff;
+}
+
+.taskRow span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+
+.taskIcons {
+  display: flex;
+  gap: 10px;
+  width: 220px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.taskIcons i {
+  cursor: pointer;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sprintSelect {
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.emptyTasksMessage {
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.sprintButton {
+  font-size: 14px;
+  padding: 4px 40px;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+  color: white;
+  cursor: pointer;
+}
+
+.sprintEnabled {
+  background-color: #5076f1;
+}
+
+.sprintDisabled {
+  background-color: #808080;
+  cursor: not-allowed;
+}

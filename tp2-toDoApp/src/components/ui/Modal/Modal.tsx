@@ -3,10 +3,12 @@ import { tareaStore } from "../../../store/tareaStore";
 import styles from "./Modal.module.css";
 import { ITarea } from "../../../types/iTareas";
 import { useTareas } from "../../../hooks/useTareas";
-import { sprintStore } from "../../../store/sprintStore";
 
 type IModal = {
-    handleCloseModal: VoidFunction
+    handleCloseModal: VoidFunction;
+    modoVisualizacion?: boolean;
+    tareaDirecta?: ITarea | null;
+    sprintSeleccionado?: string;
 }
 
 const initialState:ITarea = {
@@ -17,87 +19,126 @@ const initialState:ITarea = {
     estado: 'pendiente'
 }
 
-export const Modal: FC<IModal> = ({handleCloseModal}) => {
-
-    const tareaActiva = tareaStore((state) => state.tareaActiva)
-
-    const setTareaActiva = tareaStore((state) => state.setTareaActiva)
-
-    const sprints = sprintStore((state) => state.sprints)
-
-    const {createTarea, putTareaEditar} = useTareas()
-
-    const [formValues, setFormValues] = useState<ITarea>(initialState)
-
+export const Modal: FC<IModal> = ({handleCloseModal, modoVisualizacion = false, tareaDirecta, sprintSeleccionado}) => {
+    const tareaActiva = tareaStore((state) => state.tareaActiva);
+    const setTareaActiva = tareaStore((state) => state.setTareaActiva);
+    const {createTarea, putTareaEditar} = useTareas();
+    const [formValues, setFormValues] = useState<ITarea>(initialState);
 
     useEffect(() => {
-        if(tareaActiva) setFormValues(tareaActiva);
-    },[])
+        console.log("Tarea activa recibida en Modal:", tareaActiva);
+        console.log("Tarea directa recibida en Modal:", tareaDirecta);
+        
+        if(tareaDirecta) {
+            setFormValues(tareaDirecta);
+        } else if(tareaActiva) {
+            setFormValues(tareaActiva);
+        } else {
+            setFormValues(initialState);
+        }
+    }, [tareaActiva, tareaDirecta]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
-        setFormValues((prev) => ({ ...prev, [`${name}`]: value }))
+        const { name, value } = e.target;
+        setFormValues((prev) => ({ ...prev, [`${name}`]: value }));
     }
 
     const handleSubmit = (e:FormEvent) => {
         e.preventDefault();
         if(tareaActiva) {
-            putTareaEditar(formValues)
-        }else {
-            createTarea({...formValues,id: `${Date.now()}`})
+            putTareaEditar(formValues);
+        } else {
+            
+            const estadoInicial = sprintSeleccionado ? 'pendiente' : 'pendiente';
+            createTarea({
+                ...formValues, 
+                id: `${Date.now()}`, 
+                sprintId: sprintSeleccionado || '', 
+                estado: estadoInicial
+            });
         }
-
-        setTareaActiva(null)
-        handleCloseModal()
+    
+        setTareaActiva(null);
+        handleCloseModal();
     }
+
+   
+    console.log("formValues en Modal:", formValues);
 
     return (
         <div className={styles.containerPrincipalModal}>
             <div className={styles.contentPopUp}>
                 <div className={styles.container}>
-                    <h3>{tareaActiva ? "Editar tarea" : "Crear tarea"}</h3>
+                    <h3>
+                        {modoVisualizacion ? "Detalles de la tarea" : 
+                         tareaActiva ? "Editar tarea" : "Crear tarea"}
+                    </h3>
                 </div>
 
                 <form onSubmit={handleSubmit} className={styles.formContent}>
-                    <div >
-                        <input placeholder="Ingrese un título" type="text" required onChange={handleChange} value={formValues.titulo} autoComplete="off" name="titulo"/>
-
-                        <textarea placeholder="Ingrese una descripción" required onChange={handleChange} value={formValues.descripcion} name="descripcion"></textarea>
-
-                        <input type="date" required onChange={handleChange} value={formValues.fechaLimite} autoComplete="off" name="fechaLimite"/>
-                        <select 
-                            name="sprintId" 
-                            value={formValues.sprintId || ''} 
-                            onChange={handleChange}
-                            required
-                            className={styles.sprintSelect}
-                        >
-                            <option value="" disabled>Seleccionar Sprint</option>
-                            {sprints.map(sprint => (
-                                <option key={sprint.id} value={sprint.id}>
-                                    {sprint.titulo}
-                                </option>
-                            ))}
-                        </select>
-
-                        <select 
-                            name="estado" 
-                            value={formValues.estado} 
-                            onChange={handleChange}
-                            className={styles.formSelect}
-                        >
-                            <option value="pendiente">Pendiente</option>
-                            <option value="en_curso">En curso</option>
-                            <option value="terminado">Terminado</option>
-                        </select>
-                    
-                    
+                    <div>
+                        {modoVisualizacion ? (
+                            <>
+                                <div className={styles.viewField}>
+                                    <label>Título:</label>
+                                    <p>{formValues.titulo || "No disponible"}</p>
+                                </div>
+                                <div className={styles.viewField}>
+                                    <label>Descripción:</label>
+                                    <p>{formValues.descripcion || "No disponible"}</p>
+                                </div>
+                                <div className={styles.viewField}>
+                                    <label>Fecha límite:</label>
+                                    <p>{formValues.fechaLimite || "No disponible"}</p>
+                                </div>
+                                <div className={styles.viewField}>
+                                    <label>Estado:</label>
+                                    <p>{formValues.estado || "No disponible"}</p>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <input 
+                                    placeholder="Ingrese un título" 
+                                    type="text" 
+                                    required 
+                                    onChange={handleChange} 
+                                    value={formValues.titulo} 
+                                    autoComplete="off" 
+                                    name="titulo"
+                                />
+                                <textarea 
+                                    placeholder="Ingrese una descripción" 
+                                    required 
+                                    onChange={handleChange} 
+                                    value={formValues.descripcion} 
+                                    name="descripcion"
+                                ></textarea>
+                                <input 
+                                    type="date" 
+                                    required 
+                                    onChange={handleChange} 
+                                    value={formValues.fechaLimite} 
+                                    autoComplete="off" 
+                                    name="fechaLimite"
+                                />
+                            </>
+                        )}
                     </div>
 
                     <div className={styles.buttonCard}>
-                        <button onClick={handleCloseModal}>Cancelar</button>
-
-                        <button type="submit">{tareaActiva ? "Editar tarea" : "Crear tarea"}</button>
+                        <button type="button" onClick={() => {
+                            setTareaActiva(null);
+                            handleCloseModal();
+                        }}>
+                            Cerrar
+                        </button>
+                        
+                        {!modoVisualizacion && (
+                            <button type="submit">
+                                {tareaActiva ? "Editar tarea" : "Crear tarea"}
+                            </button>
+                        )}
                     </div>
                 </form>
             </div>

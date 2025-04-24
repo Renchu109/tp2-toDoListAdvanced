@@ -12,12 +12,17 @@ const SprintList: React.FC = () => {
     const sprints = sprintStore((state) => state.sprints);
     const setSprintActiva = sprintStore((state) => state.setSprintActiva);
     const { eliminarSprint } = useSprints();
-    const openModalSprint = () => setIsModalSprintOpen(true);
+    const openModalSprint = () => {
+      setSprintActiva(null); 
+      setIsModalSprintOpen(true);
+    };
+
     const closeModalSprint = () => setIsModalSprintOpen(false);
 
     const navigate = useNavigate();
 
-    const handleGoToSprint = () => {
+    const handleGoToSprint = (sprint: ISprint) => {
+      setSprintActiva(sprint);
       navigate('/sprint');
     };
 
@@ -78,18 +83,18 @@ const SprintList: React.FC = () => {
             </div>
             
             <div className={styles.sprintActionIcons}>
-              <button onClick={handleGoToSprint} className={styles.iconButton}>
-              <span className="material-symbols-outlined"
-                style={{
-                  fontSize: '24px',
-                  color: 'white',
-                  transition: 'color 0.1s ease-in-out',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#5076f1')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'white')}
+              <button onClick={() => handleGoToSprint(sprint)} className={styles.iconButton}>
+                <span className="material-symbols-outlined"
+                  style={{
+                    fontSize: '24px',
+                    color: 'white',
+                    transition: 'color 0.1s ease-in-out',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#5076f1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'white')}
               >
-              visibility
-            </span>
+                  visibility
+                </span>
               </button>
               <button
                 onClick={() => handleEditar(sprint)}
@@ -136,7 +141,6 @@ const SprintList: React.FC = () => {
       </div>
       
       {isModalSprintOpen && <ModalSprint handleCloseModalSprint={closeModalSprint} />}
-      {isModalSprintOpen && <ModalSprint handleCloseModalSprint={() => setIsModalSprintOpen(false)} />}
 
     </div>
   );

@@ -1,13 +1,15 @@
 import { useShallow } from "zustand/shallow"
 import { tareaStore } from "../store/tareaStore"
-import { editarTarea, eliminarTareaPorId, getAllTareas, postNuevaTarea } from "../http/tarea"
+import { eliminarTareaPorId, getAllTareas, postNuevaTarea } from "../http/tarea"
 import { ITarea } from "../types/iTareas"
 import Swal from "sweetalert2"
+import { URL_BACKLOG } from "../utils/constantes"
+import axios from "axios"
 
 
 export const useTareas = () => {
 
-    const {tareas,setArrayTareas,agregarNuevaTarea,eliminarUnaTarea,editarUnaTarea} = tareaStore(useShallow((state) => ({
+    const {tareas,setArrayTareas,agregarNuevaTarea,eliminarUnaTarea } = tareaStore(useShallow((state) => ({
         tareas: state.tareas,
         setArrayTareas: state.setArrayTareas,
         agregarNuevaTarea: state.agregarNuevaTarea,
@@ -31,19 +33,21 @@ export const useTareas = () => {
         }
     }
 
-    const putTareaEditar = async (tareaEditada:ITarea) => {
-
-        const estadoPrevio = tareas.find((el) => el.id === tareaEditada.id)
-
-        editarUnaTarea(tareaEditada)
+    const putTareaEditar = async (tareaActualizada: ITarea) => {
         try {
-            await editarTarea(tareaEditada);
-            Swal.fire("Éxito", "Tarea actualizada correctamente", "success")
-        }catch (error) {
-            if (estadoPrevio) editarUnaTarea(estadoPrevio);
-            console.log("Algo salió mal al editar")
+            const response = await axios.put(`${URL_BACKLOG}/${tareaActualizada.id}`, {
+                titulo: tareaActualizada.titulo,
+                descripcion: tareaActualizada.descripcion,
+                fechaLimite: tareaActualizada.fechaLimite,
+                sprintId: tareaActualizada.sprintId,
+                estado: tareaActualizada.estado,    
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error al actualizar tarea:", error);
+            throw error;
         }
-    }
+    };
 
     const eliminarTarea = async (idTarea:string) => {
 

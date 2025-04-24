@@ -13,6 +13,8 @@ const ListaTareasSprint: React.FC = () => {
   const sprintActiva = sprintStore((state) => state.sprintActiva);
   const { eliminarTarea } = useTareas();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modoVisualizacion, setModoVisualizacion] = useState(false);
+  const { putTareaEditar } = useTareas();
 
   const getTareasFiltradas = (estado: 'pendiente' | 'en_curso' | 'terminado') => {
     return tareas.filter(tarea => 
@@ -21,21 +23,33 @@ const ListaTareasSprint: React.FC = () => {
     );
   };
 
-  const moverTarea = (tarea: ITarea, nuevoEstado: 'pendiente' | 'en_curso' | 'terminado') => {
+  const moverTarea = async (tarea: ITarea, nuevoEstado: 'pendiente' | 'en_curso' | 'terminado') => {
     const tareaActualizada = { ...tarea, estado: nuevoEstado };
-    actualizarTarea(tareaActualizada);
-  };
+    console.log("Moviendo tarea:", tareaActualizada);
+
+    try {
+        await putTareaEditar(tareaActualizada); 
+        actualizarTarea(tareaActualizada);     
+        console.log(`Tarea actualizada a estado: ${nuevoEstado}`);
+    } catch (error) {
+        console.error("Error al mover tarea:", error);
+    }
+};
+
 
   const handleVerTarea = (tarea: ITarea) => {
     setTareaActiva(tarea);
+    setModoVisualizacion(true);
     setIsModalOpen(true);
   };
   
+  
   const handleEditar = (tarea: ITarea) => {
     setTareaActiva(tarea);
+    setModoVisualizacion(false);
     setIsModalOpen(true);
   };
-
+  
   const handleEliminar = (idTarea: string) => {
     console.log("Eliminando tarea con ID:", idTarea);
     if (!idTarea) {
@@ -236,7 +250,16 @@ const ListaTareasSprint: React.FC = () => {
         </div>
       )}
       
-      {isModalOpen && <Modal handleCloseModal={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+  <Modal
+    handleCloseModal={() => {
+      setIsModalOpen(false);
+      setModoVisualizacion(false); 
+    }}
+    modoVisualizacion={modoVisualizacion}
+  />
+)}
+
     </>
   );
 };

@@ -31,17 +31,23 @@ export const useSprints = () => {
         }
     }
 
-    const putSprintEditar = async (sprintEditada:ISprint) => {
-
-        const estadoPrevio = sprints.find((el) => el.id === sprintEditada.id)
-
-        editarUnaSprint(sprintEditada)
+    const putSprintEditar = async (sprintEditada: ISprint) => {
+        const estadoPrevio = sprints.find((el) => el.id === sprintEditada.id);
+        
+        
+        const sprintConMismoId = {
+            ...sprintEditada,
+            id: estadoPrevio?.id
+        };
+        
+        editarUnaSprint(sprintConMismoId);
+        
         try {
-            await editarSprint(sprintEditada);
-            Swal.fire("Éxito", "Sprint actualizada correctamente", "success")
-        }catch (error) {
+            await editarSprint(sprintConMismoId);
+            Swal.fire("Éxito", "Sprint actualizada correctamente", "success");
+        } catch (error) {
             if (estadoPrevio) editarUnaSprint(estadoPrevio);
-            console.log("Algo salió mal al editar")
+            console.log("Algo salió mal al editar");
         }
     }
 
