@@ -19,7 +19,20 @@ const ListaTareas: React.FC = () => {
   const [sprintSeleccionado, setSprintSeleccionado] = useState<Record<string, string>>({});
   const { putTareaEditar } = useTareas();
 
-  // Filtramos las tareas que no están asignadas a un sprint
+  const esFechaProxima = (fechaLimite: string): boolean => {
+    if (!fechaLimite) return false;
+    
+    const fechaLimiteDate = new Date(fechaLimite);
+    const hoy = new Date();
+    
+    hoy.setHours(0, 0, 0, 0);
+    
+    const diferenciaTiempo = fechaLimiteDate.getTime() - hoy.getTime();
+    const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
+    
+    return diferenciaDias >= 0 && diferenciaDias <= 3;
+  };
+
   const tareasNoAsignadas = tareas.filter(tarea => !tarea.sprintId);
 
   useEffect(() => {
@@ -77,13 +90,12 @@ const ListaTareas: React.FC = () => {
     console.log("Asignando tarea a sprint:", tareaActualizada);
 
     try {
-        await putTareaEditar(tareaActualizada); // Actualiza en el backend
-        actualizarTarea(tareaActualizada); // Actualiza el estado en el store
+        await putTareaEditar(tareaActualizada); 
+        actualizarTarea(tareaActualizada); 
     } catch (error) {
         console.error("Error al asignar sprint:", error);
     }
 
-    // Limpiar el sprint seleccionado para esta tarea
     const nuevosSprintsSeleccionados = { ...sprintSeleccionado };
     delete nuevosSprintsSeleccionados[tarea.id];
     setSprintSeleccionado(nuevosSprintsSeleccionados);
@@ -112,7 +124,8 @@ const ListaTareas: React.FC = () => {
       </div>
       {tareasNoAsignadas.length > 0 ? (
         tareasNoAsignadas.map((tarea) => (
-          <div key={tarea.id} className={styles.taskRow}>
+          <div key={tarea.id} className={`${styles.taskRow} ${esFechaProxima(tarea.fechaLimite) ? styles.taskUrgent : ''}`}
+          >
             <span>{tarea.titulo}</span>
             <span>{tarea.descripcion}</span>
             <span>Sin asignar</span>

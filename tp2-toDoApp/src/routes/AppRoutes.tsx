@@ -11,6 +11,7 @@ export const AppRoutes = () => {
           <Route path="*" element={<Navigate to="/backlog" replace />} />
           <Route path="/backlog" element={<Backlog />} />
           <Route path="/sprint" element={<Sprint />} />
+          <Route path="/sprint/:sprintId" element={<Sprint />} />
           </Routes>
       </BrowserRouter>
   

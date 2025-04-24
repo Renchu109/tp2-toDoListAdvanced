@@ -106,3 +106,29 @@
   color: #999;
   font-size: 16px;
 }
+
+.moveButton {
+  font-size: '24px';
+  color: '#5076f1';
+  transition: 'color 0.1s ease-in-out';
+}
+
+.moveBacklog {
+  background-color: #5076f1;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.moveBacklog:hover {
+  background-color: #3a5cce;
+}
+
+.taskUrgent {
+  background-color: rgba(220, 53, 69, 0.7) !important;
+  transition: background-color 0.3s ease;
+  position: relative;
+}

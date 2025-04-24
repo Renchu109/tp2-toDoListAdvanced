@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './SelectedSprintList.module.css';
 import { sprintStore } from '../../../store/sprintStore';
 import { ModalSprint } from '../Modal/ModalSprint';
@@ -11,16 +11,22 @@ const SprintList: React.FC = () => {
   const sprints = sprintStore((state) => state.sprints);
   const setSprintActiva = sprintStore((state) => state.setSprintActiva);
   const sprintActiva = sprintStore((state) => state.sprintActiva);
-  const { eliminarSprint } = useSprints();
+  const { eliminarSprint, getSprints } = useSprints();
   const navigate = useNavigate();
+  const [isCreateMode, setIsCreateMode] = useState(false);
+
+  useEffect(() => {
+    getSprints();
+  }, [getSprints]);
 
   const handleVerSprint = (sprint: ISprint) => {
     setSprintActiva(sprint);
+    navigate(`/sprint/${sprint.id}`);
   };
 
   const handleGoBack = () => {
-      navigate('/');
-    };
+    navigate('/');
+  };
 
   const handleEditar = (sprint: ISprint) => {
     setSprintActiva(sprint);
@@ -30,18 +36,25 @@ const SprintList: React.FC = () => {
   const handleEliminar = (id: string) => {
     if (sprintActiva && sprintActiva.id === id) {
       setSprintActiva(null);
+      navigate('/sprint');
     }
     eliminarSprint(id);
   };
 
+  const handleCloseModalSprint = () => {
+    setIsModalOpen(false);
+    setIsCreateMode(false);
+    getSprints();
+  };
+
   return (
     <div className={styles.sprintListContainer}>
-      <div className={styles.sprintItem} >
+      <div className={styles.sprintItem}>
         <span>Backlog</span>
         <button onClick={handleGoBack} className={styles.iconButton}>
-        <span className="material-symbols-outlined">
-          undo
-        </span>
+          <span className="material-symbols-outlined">
+            undo
+          </span>
         </button>
       </div>
       <div className={styles.headerContainer}>
@@ -49,7 +62,7 @@ const SprintList: React.FC = () => {
         <button 
           className={styles.createSprintButton} 
           onClick={() => {
-            setSprintActiva(null); 
+            setIsCreateMode(true);
             setIsModalOpen(true);
           }}
         >
@@ -80,7 +93,7 @@ const SprintList: React.FC = () => {
               >
                 <span className="material-symbols-outlined">
                   edit
-              </span>
+                </span>
               </button>
               <button
                 onClick={(e) => {
@@ -91,10 +104,9 @@ const SprintList: React.FC = () => {
                 }}
                 className={styles.iconButton}
               >
-                <span
-                className="material-symbols-outlined">
-                delete
-              </span>
+                <span className="material-symbols-outlined">
+                  delete
+                </span>
               </button>
             </div>
           </div>
@@ -105,7 +117,10 @@ const SprintList: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <ModalSprint handleCloseModalSprint={() => setIsModalOpen(false)} />
+        <ModalSprint 
+          handleCloseModalSprint={handleCloseModalSprint} 
+          forceCreateMode={isCreateMode}
+        />
       )}
     </div>
   );

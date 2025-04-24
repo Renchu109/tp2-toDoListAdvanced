@@ -1,11 +1,12 @@
 {
   "tareas": [
     {
-      "id": "dcec0ad4-31e0-4279-8ccf-72bd1f20b52d",
       "titulo": "Tarea 1",
       "descripcion": "Esta es una tarea.",
-      "fechaLimite": "2025-03-05",
-      "estado": "pendiente"
+      "fechaLimite": "2025-04-30",
+      "sprintId": "",
+      "estado": "pendiente",
+      "id": "dcec0ad4-31e0-4279-8ccf-72bd1f20b52d"
     },
     {
       "id": "50699dec-3d1a-45ff-a94d-82d416eac053",
@@ -20,8 +21,14 @@
     {
       "id": "b0e3f34b-68c6-49eb-b059-ab251ed81629",
       "titulo": "Sprint 1",
-      "fechaInicio": "2025-03-04",
-      "fechaCierre": "2025-03-25"
+      "fechaInicio": "2025-03-01",
+      "fechaCierre": "2025-07-01"
+    },
+    {
+      "id": "1745526401009",
+      "titulo": "Sprint 2",
+      "fechaInicio": "2025-04-15",
+      "fechaCierre": "2025-04-30"
     }
   ]
 }

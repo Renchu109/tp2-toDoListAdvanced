@@ -23,7 +23,7 @@ const SprintList: React.FC = () => {
 
     const handleGoToSprint = (sprint: ISprint) => {
       setSprintActiva(sprint);
-      navigate('/sprint');
+      navigate(`/sprint/${sprint.id}`);
     };
 
   useEffect(() => {

@@ -5,7 +5,8 @@ import { ISprint } from "../../../types/iSprints";
 import { useSprints } from "../../../hooks/useSprints";
 
 type IModalSprint = {
-    handleCloseModalSprint: VoidFunction
+    handleCloseModalSprint: VoidFunction;
+    forceCreateMode?: boolean;
 }
 
 const initialState:ISprint = {
@@ -14,42 +15,62 @@ const initialState:ISprint = {
     fechaCierre:''
 }
 
-export const ModalSprint: FC<IModalSprint> = ({handleCloseModalSprint}) => {
+export const ModalSprint: FC<IModalSprint> = ({handleCloseModalSprint, forceCreateMode = false}) => {
     const sprintActiva = sprintStore((state) => state.sprintActiva);
     const setSprintActiva = sprintStore((state) => state.setSprintActiva);
-    const {createSprint, putSprintEditar} = useSprints();
+    const {createSprint, putSprintEditar, getSprints} = useSprints();
     const [formValues, setFormValues] = useState<ISprint>(initialState);
 
     useEffect(() => {
-        if(sprintActiva) {
+        if (forceCreateMode) {
+            setFormValues(initialState);
+        } else if (sprintActiva) {
             setFormValues(sprintActiva);
         } else {
             setFormValues(initialState);
         }
-    }, [sprintActiva]);
+    }, [sprintActiva, forceCreateMode]);
 
     const handleChange = (e:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name,value} = e.target;
         setFormValues((prev) => ({...prev, [`${name}`]:value}));
     }
 
-    const handleSubmit = (e:FormEvent) => {
+    const handleSubmit = async (e:FormEvent) => {
         e.preventDefault();
-        if(sprintActiva) {
-            putSprintEditar(formValues);
-        } else {
-            createSprint({...formValues, id: `${Date.now()}`});
+        
+        // Asegurarse de que los datos son válidos
+        if (!formValues.titulo || !formValues.fechaInicio || !formValues.fechaCierre) {
+            alert("Por favor complete todos los campos");
+            return;
         }
-
-        setSprintActiva(null);
-        handleCloseModalSprint();
+        
+        try {
+            if (sprintActiva && !forceCreateMode) {
+                await putSprintEditar(formValues);
+            } else {
+                // Generar ID único
+                const newId = `sprint_${Date.now()}`;
+                await createSprint({...formValues, id: newId});
+            }
+            
+            // Recargar los sprints después de crear o editar
+            await getSprints();
+            
+            // Limpiar el estado y cerrar el modal
+            setSprintActiva(null);
+            handleCloseModalSprint();
+        } catch (error) {
+            console.error("Error al guardar el sprint:", error);
+            alert("Ocurrió un error al guardar el sprint");
+        }
     }
 
     return (
         <div className={styles.containerPrincipalModalSprint}>
             <div className={styles.contentPopUp}>
                 <div className={styles.container}>
-                    <h3>{sprintActiva ? "Editar sprint" : "Crear sprint"}</h3>
+                    <h3>{forceCreateMode ? "Crear sprint" : sprintActiva ? "Editar sprint" : "Crear sprint"}</h3>
                 </div>
 
                 <form onSubmit={handleSubmit} className={styles.formContent}>
@@ -90,7 +111,7 @@ export const ModalSprint: FC<IModalSprint> = ({handleCloseModalSprint}) => {
                         </button>
 
                         <button type="submit">
-                            {sprintActiva ? "Editar sprint" : "Crear sprint"}
+                            {forceCreateMode ? "Crear sprint" : sprintActiva ? "Editar sprint" : "Crear sprint"}
                         </button>
                     </div>
                 </form>

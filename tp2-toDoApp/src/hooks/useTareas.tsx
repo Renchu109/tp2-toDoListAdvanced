@@ -9,7 +9,7 @@ import axios from "axios"
 
 export const useTareas = () => {
 
-    const {tareas,setArrayTareas,agregarNuevaTarea,eliminarUnaTarea } = tareaStore(useShallow((state) => ({
+    const {tareas, setArrayTareas, agregarNuevaTarea, eliminarUnaTarea, editarUnaTarea } = tareaStore(useShallow((state) => ({
         tareas: state.tareas,
         setArrayTareas: state.setArrayTareas,
         agregarNuevaTarea: state.agregarNuevaTarea,
@@ -35,6 +35,8 @@ export const useTareas = () => {
 
     const putTareaEditar = async (tareaActualizada: ITarea) => {
         try {
+            editarUnaTarea(tareaActualizada);
+            
             const response = await axios.put(`${URL_BACKLOG}/${tareaActualizada.id}`, {
                 titulo: tareaActualizada.titulo,
                 descripcion: tareaActualizada.descripcion,
@@ -42,6 +44,7 @@ export const useTareas = () => {
                 sprintId: tareaActualizada.sprintId,
                 estado: tareaActualizada.estado,    
             });
+            
             return response.data;
         } catch (error) {
             console.error("Error al actualizar tarea:", error);

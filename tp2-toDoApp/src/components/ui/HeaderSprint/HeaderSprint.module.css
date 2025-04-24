@@ -30,12 +30,17 @@
   }
 
   .createTaskButton{
-    width: 100px;
-    height: 30px;
-    margin-left: 20px;
-    border-radius: 10px;
+    background-color: #5076f1;
     color: white;
-    background-color: #CCCC;
-    font-weight: bold;
+    border: none;
+    padding: 8px 12px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+  .createTaskButton:hover {
+  background-color: #3a5cce;
 }
 

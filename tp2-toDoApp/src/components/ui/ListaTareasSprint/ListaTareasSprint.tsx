@@ -16,6 +16,20 @@ const ListaTareasSprint: React.FC = () => {
   const [modoVisualizacion, setModoVisualizacion] = useState(false);
   const { putTareaEditar } = useTareas();
 
+  const esFechaProxima = (fechaLimite: string): boolean => {
+    if (!fechaLimite) return false;
+    
+    const fechaLimiteDate = new Date(fechaLimite);
+    const hoy = new Date();
+    
+    hoy.setHours(0, 0, 0, 0);
+    
+    const diferenciaTiempo = fechaLimiteDate.getTime() - hoy.getTime();
+    const diferenciaDias = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
+    
+    return diferenciaDias >= 0 && diferenciaDias <= 3;
+  };
+
   const getTareasFiltradas = (estado: 'pendiente' | 'en_curso' | 'terminado') => {
     return tareas.filter(tarea => 
       tarea.sprintId === sprintActiva?.id && 
@@ -34,15 +48,26 @@ const ListaTareasSprint: React.FC = () => {
     } catch (error) {
         console.error("Error al mover tarea:", error);
     }
-};
+  };
 
+  const enviarAlBacklog = async (tarea: ITarea) => {
+    const tareaActualizada = { ...tarea, sprintId: '' };
+    console.log("Enviando tarea al backlog:", tareaActualizada);
+
+    try {
+        await putTareaEditar(tareaActualizada); 
+        actualizarTarea(tareaActualizada);     
+        console.log("Tarea enviada al backlog");
+    } catch (error) {
+        console.error("Error al enviar tarea al backlog:", error);
+    }
+  };
 
   const handleVerTarea = (tarea: ITarea) => {
     setTareaActiva(tarea);
     setModoVisualizacion(true);
     setIsModalOpen(true);
   };
-  
   
   const handleEditar = (tarea: ITarea) => {
     setTareaActiva(tarea);
@@ -61,9 +86,19 @@ const ListaTareasSprint: React.FC = () => {
 
   const renderTarea = (tarea: ITarea) => {
     return (
-      <div key={tarea.id} className={styles.taskRow}>
+      <div key={tarea.id} className={`${styles.taskRow} ${esFechaProxima(tarea.fechaLimite) ? styles.taskUrgent : ''}`}
+      >
         <span className={styles.taskTitle}>{tarea.titulo}</span>
         <div className={styles.taskIcons}>
+
+        <button 
+          onClick={() => enviarAlBacklog(tarea)} 
+          className={styles.moveBacklog} 
+          title="Enviar al Backlog"
+        >
+          Enviar al Backlog
+        </button>
+
 
           {tarea.estado === 'pendiente' && (
             <button 
@@ -145,7 +180,6 @@ const ListaTareasSprint: React.FC = () => {
             </button>
           )}
           
-          
           <button onClick={() => handleVerTarea(tarea)} className={styles.iconButton}>
             <span className="material-symbols-outlined"
                 style={{
@@ -217,7 +251,6 @@ const ListaTareasSprint: React.FC = () => {
               </div>
             </div>
             
-            
             <div className={styles.column}>
               <div className={styles.columnHeader}>
                 <h3>En curso</h3>
@@ -229,7 +262,6 @@ const ListaTareasSprint: React.FC = () => {
                 )}
               </div>
             </div>
-            
             
             <div className={styles.column}>
               <div className={styles.columnHeader}>
@@ -251,15 +283,14 @@ const ListaTareasSprint: React.FC = () => {
       )}
       
       {isModalOpen && (
-  <Modal
-    handleCloseModal={() => {
-      setIsModalOpen(false);
-      setModoVisualizacion(false); 
-    }}
-    modoVisualizacion={modoVisualizacion}
-  />
-)}
-
+        <Modal
+          handleCloseModal={() => {
+            setIsModalOpen(false);
+            setModoVisualizacion(false); 
+          }}
+          modoVisualizacion={modoVisualizacion}
+        />
+      )}
     </>
   );
 };
