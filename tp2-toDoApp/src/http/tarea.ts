@@ -32,7 +32,6 @@ export const editarTarea = async (tareaActualizada: ITarea) => {
             titulo: tareaActualizada.titulo,
             descripcion: tareaActualizada.descripcion,
             fechaLimite: tareaActualizada.fechaLimite,
-            sprintId: tareaActualizada.sprintId, 
             estado: tareaActualizada.estado,   
         });
 

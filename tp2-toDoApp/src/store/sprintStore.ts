@@ -10,6 +10,7 @@ interface ISprintStore {
     agregarNuevaSprint: (nuevaSprint: ISprint) => void
     editarUnaSprint: (sprintActualizada: ISprint) => void
     eliminarUnaSprint: (idSprint: string) => void
+    agregarTareaAlSprint: (sprintId: string, nuevaTarea: any) => void
 }
 
 
@@ -39,5 +40,31 @@ export const sprintStore = create<ISprintStore>((set) => ({
     return { sprints: arregloSprints };
 }),
 
+agregarTareaAlSprint: (sprintId, nuevaTarea) => set((state) => {
+    const nuevosSprints = state.sprints.map((sprint) => {
+        if (sprint.id === sprintId) {
+            return {
+                ...sprint,
+                tareas: [...(sprint.tareas || []), nuevaTarea]
+            };
+        }
+        return sprint;
+    });
+
+    let nuevaSprintActiva = state.sprintActiva;
+    if (state.sprintActiva?.id === sprintId) {
+        nuevaSprintActiva = {
+            ...state.sprintActiva,
+            tareas: [...(state.sprintActiva.tareas || []), nuevaTarea]
+        };
+    }
+
+    return { 
+        sprints: nuevosSprints,
+        sprintActiva: nuevaSprintActiva
+    };
+}),
+
     setSprintActiva: (sprintActivaIn) => set(() => ({sprintActiva: sprintActivaIn}))
 }))
+

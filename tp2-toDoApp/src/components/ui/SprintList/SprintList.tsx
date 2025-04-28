@@ -7,29 +7,35 @@ import { sprintStore } from '../../../store/sprintStore';
 import { useNavigate } from 'react-router-dom';
 
 const SprintList: React.FC = () => {
-
   const [isModalSprintOpen, setIsModalSprintOpen] = useState(false);
-    const sprints = sprintStore((state) => state.sprints);
-    const setSprintActiva = sprintStore((state) => state.setSprintActiva);
-    const { eliminarSprint } = useSprints();
-    const openModalSprint = () => {
-      setSprintActiva(null); 
-      setIsModalSprintOpen(true);
-    };
+  const sprints = sprintStore((state) => state.sprints);
+  const setSprintActiva = sprintStore((state) => state.setSprintActiva);
+  const { eliminarSprint, getSprints } = useSprints();
+  
+  const openModalSprint = () => {
+    setSprintActiva(null); 
+    setIsModalSprintOpen(true);
+  };
 
-    const closeModalSprint = () => setIsModalSprintOpen(false);
+  const closeModalSprint = () => {
+    setIsModalSprintOpen(false);
+    getSprints();
+  };
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleGoToSprint = (sprint: ISprint) => {
-      setSprintActiva(sprint);
-      navigate(`/sprint/${sprint.id}`);
-    };
+  const handleGoToSprint = (sprint: ISprint) => {
+    setSprintActiva(sprint);
+    navigate(`/sprint/${sprint.id}`);
+  };
+
+  useEffect(() => {
+    getSprints();
+  }, []);
 
   useEffect(() => {
     console.log("Sprints actuales en ListaSprints:", sprints);
   }, [sprints]);
-
   
   const handleEditar = (sprint: ISprint) => {
     setSprintActiva(sprint);
@@ -43,15 +49,8 @@ const SprintList: React.FC = () => {
       return;
     }
     
-    const sprint = sprints.find(t => t.id === idSprint);
-    if (!sprint) {
-      console.error("No se encontró la sprint con ID:", idSprint);
-      return;
-    }
-    
     eliminarSprint(idSprint);
   };
-
   
   return (
     <div className={styles.sprintListContainer}>
@@ -62,7 +61,6 @@ const SprintList: React.FC = () => {
         <button className={styles.createTaskButton} onClick={openModalSprint}>
           Crear Sprint
         </button>
-        
       </div>
       
       <div className={styles.sprintDetailsBox}>
@@ -70,7 +68,7 @@ const SprintList: React.FC = () => {
           <div key={sprint.id} className={styles.sprintDetailsRow}>
             <div className={styles.sprintDetailsRox}>
               <span>Título: </span>
-              <span>{sprint.titulo}</span>
+              <span>{sprint.nombre}</span>
             </div>
             <div className={styles.sprintDetailsRox}>
               <span>Inicio: </span>
@@ -114,7 +112,7 @@ const SprintList: React.FC = () => {
               <button
                 onClick={() => {
                   if (sprint.id) {
-                    console.log(`Clic en eliminar sprint: ${sprint.id} - ${sprint.titulo}`);
+                    console.log(`Clic en eliminar sprint: ${sprint.id} - ${sprint.nombre}`);
                     handleEliminar(sprint.id);
                   } else {
                     console.error("Sprint sin ID:", sprint);
@@ -138,13 +136,14 @@ const SprintList: React.FC = () => {
             </div>
           </div>
         ))}
+        {sprints.length === 0 && (
+          <div className={styles.emptySprintsMessage}>No hay sprints creados</div>
+        )}
       </div>
       
       {isModalSprintOpen && <ModalSprint handleCloseModalSprint={closeModalSprint} />}
-
     </div>
   );
-  
 };
 
 export default SprintList;

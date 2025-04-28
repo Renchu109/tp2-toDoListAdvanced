@@ -36,6 +36,7 @@
     flex-direction: column;
     justify-content: space-around;
     gap: 1rem;
+    width: 100%;
 }
 
 .formContent input, textarea{
@@ -65,3 +66,20 @@
     width: 100px;
     height: 30px;
 }
+
+.formGroup {
+    margin-bottom: 15px;
+    position: relative;
+    width: 100%;
+  }
+  
+  .inputError {
+    border: 1px solid #ff4d4f !important;
+  }
+  
+  .errorMessage {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+    text-align: left;
+  }

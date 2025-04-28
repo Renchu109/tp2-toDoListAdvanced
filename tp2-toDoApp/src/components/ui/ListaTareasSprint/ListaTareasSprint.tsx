@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import styles from './ListaTareasSprint.module.css';
-import { tareaStore } from '../../../store/tareaStore';
+import { backlogStore } from '../../../store/backlogStore';
 import { ITarea } from '../../../types/iTareas';
 import { Modal } from '../Modal/Modal';
 import { useTareas } from '../../../hooks/useTareas';
 import { sprintStore } from '../../../store/sprintStore';
+import Swal from 'sweetalert2';
+import { removeTaskFromSprint } from '../../../data/sprintController';
+import { getAllBacklogTasks } from '../../../data/backlogController';
 
 const ListaTareasSprint: React.FC = () => {
-  const tareas = tareaStore((state) => state.tareas);
-  const setTareaActiva = tareaStore((state) => state.setTareaActiva);
-  const actualizarTarea = tareaStore((state) => state.actualizarTarea);
   const sprintActiva = sprintStore((state) => state.sprintActiva);
-  const { eliminarTarea } = useTareas();
+  const setTareaActiva = backlogStore((state) => state.setTareaActiva);
+  const setArrayTareas = backlogStore((state) => state.setArrayTareas);
+  const { putTareaEditar } = useTareas();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modoVisualizacion, setModoVisualizacion] = useState(false);
-  const { putTareaEditar } = useTareas();
 
   const esFechaProxima = (fechaLimite: string): boolean => {
     if (!fechaLimite) return false;
@@ -31,35 +32,65 @@ const ListaTareasSprint: React.FC = () => {
   };
 
   const getTareasFiltradas = (estado: 'pendiente' | 'en_curso' | 'terminado') => {
-    return tareas.filter(tarea => 
-      tarea.sprintId === sprintActiva?.id && 
-      tarea.estado === estado
-    );
+    if (!sprintActiva || !sprintActiva.tareas) return [];
+    return sprintActiva.tareas.filter(tarea => tarea.estado === estado);
   };
 
   const moverTarea = async (tarea: ITarea, nuevoEstado: 'pendiente' | 'en_curso' | 'terminado') => {
+    if (!sprintActiva || !sprintActiva.id) return;
+    
     const tareaActualizada = { ...tarea, estado: nuevoEstado };
     console.log("Moviendo tarea:", tareaActualizada);
 
     try {
-        await putTareaEditar(tareaActualizada); 
-        actualizarTarea(tareaActualizada);     
-        console.log(`Tarea actualizada a estado: ${nuevoEstado}`);
+      await putTareaEditar(tareaActualizada, false);
+      
+      if (sprintActiva && sprintActiva.tareas) {
+        const tareasActualizadas = sprintActiva.tareas.map(t => 
+          t.id === tarea.id ? tareaActualizada : t
+        );
+        
+        const sprintActualizado = {
+          ...sprintActiva,
+          tareas: tareasActualizadas
+        };
+        
+        sprintStore.getState().setSprintActiva(sprintActualizado);
+      }
+      
+      console.log(`Tarea actualizada a estado: ${nuevoEstado}`);
     } catch (error) {
-        console.error("Error al mover tarea:", error);
+      console.error("Error al mover tarea:", error);
     }
   };
 
   const enviarAlBacklog = async (tarea: ITarea) => {
-    const tareaActualizada = { ...tarea, sprintId: '' };
-    console.log("Enviando tarea al backlog:", tareaActualizada);
-
+    if (!sprintActiva || !sprintActiva.id) return;
+    
+    console.log("Enviando tarea al backlog:", tarea);
+  
     try {
-        await putTareaEditar(tareaActualizada); 
-        actualizarTarea(tareaActualizada);     
-        console.log("Tarea enviada al backlog");
+      await removeTaskFromSprint(sprintActiva.id, tarea.id, true);
+      
+      if (sprintActiva && sprintActiva.tareas && tarea.id) {
+        const tareasActualizadas = sprintActiva.tareas.filter(t => t.id !== tarea.id);
+        
+        const sprintActualizado = {
+          ...sprintActiva,
+          tareas: tareasActualizadas
+        };
+        
+        sprintStore.getState().setSprintActiva(sprintActualizado);
+      }
+      
+      const backlogTasks = await getAllBacklogTasks();
+      setArrayTareas(backlogTasks);
+      
+      Swal.fire("Completado", "La tarea se envió al backlog correctamente", "success");
+      
+      console.log("Tarea enviada al backlog");
     } catch (error) {
-        console.error("Error al enviar tarea al backlog:", error);
+      console.error("Error al enviar tarea al backlog:", error);
     }
   };
 
@@ -75,13 +106,46 @@ const ListaTareasSprint: React.FC = () => {
     setIsModalOpen(true);
   };
   
-  const handleEliminar = (idTarea: string) => {
-    console.log("Eliminando tarea con ID:", idTarea);
-    if (!idTarea) {
-      console.error("ID de tarea inválido");
+  const handleEliminar = async (tarea: ITarea) => {
+    if (!tarea.id || !sprintActiva || !sprintActiva.id) {
+      console.error("ID de tarea o sprint inválido");
       return;
     }
-    eliminarTarea(idTarea);
+    
+    try {
+      const confirm = await Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Esta acción no se puede deshacer",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+      });
+  
+      if (!confirm.isConfirmed) return;
+      
+      await sprintStore.getState().eliminarUnaSprint(tarea.id);
+      
+      await removeTaskFromSprint(sprintActiva.id, tarea.id, false);
+      
+      if (sprintActiva && sprintActiva.tareas) {
+        const tareasActualizadas = sprintActiva.tareas.filter(t => t.id !== tarea.id);
+        
+        const sprintActualizado = {
+          ...sprintActiva,
+          tareas: tareasActualizadas
+        };
+        
+        sprintStore.getState().setSprintActiva(sprintActualizado);
+        
+        await sprintStore.getState().editarUnaSprint(sprintActualizado);
+      }
+      
+      Swal.fire("Eliminado", "La tarea se eliminó correctamente", "success");
+    } catch (error) {
+      console.error("Error al eliminar tarea del sprint:", error);
+      Swal.fire("Error", "No se pudo eliminar la tarea", "error");
+    }
   };
 
   const renderTarea = (tarea: ITarea) => {
@@ -98,7 +162,6 @@ const ListaTareasSprint: React.FC = () => {
         >
           Enviar al Backlog
         </button>
-
 
           {tarea.estado === 'pendiente' && (
             <button 
@@ -208,11 +271,7 @@ const ListaTareasSprint: React.FC = () => {
           </button>
           
           <button
-            onClick={() => {
-              if (tarea.id) {
-                handleEliminar(tarea.id);
-              }
-            }}
+            onClick={() => handleEliminar(tarea)}
             className={styles.iconButton}
           >
             <span
@@ -289,6 +348,7 @@ const ListaTareasSprint: React.FC = () => {
             setModoVisualizacion(false); 
           }}
           modoVisualizacion={modoVisualizacion}
+          isSprintTask={true} 
         />
       )}
     </>

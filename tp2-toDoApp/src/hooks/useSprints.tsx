@@ -1,13 +1,16 @@
 import { useShallow } from "zustand/shallow"
 import { sprintStore } from "../store/sprintStore"
-import { editarSprint, eliminarSprintPorId, getAllSprints, postNuevaSprint } from "../http/sprint"
 import { ISprint } from "../types/iSprints"
 import Swal from "sweetalert2"
-
+import { 
+    getAllSprints, 
+    createSprint as createSprintAPI, 
+    updateSprint, 
+    deleteSprint as deleteSprintAPI 
+} from "../data/sprintController"
 
 export const useSprints = () => {
-
-    const {sprints,setArraySprints,agregarNuevaSprint,eliminarUnaSprint,editarUnaSprint} = sprintStore(useShallow((state) => ({
+    const {sprints, setArraySprints, agregarNuevaSprint, eliminarUnaSprint, editarUnaSprint} = sprintStore(useShallow((state) => ({
         sprints: state.sprints,
         setArraySprints: state.setArraySprints,
         agregarNuevaSprint: state.agregarNuevaSprint,
@@ -16,43 +19,43 @@ export const useSprints = () => {
     })))
 
     const getSprints = async() => {
-        const data = await getAllSprints();
-        if(data) setArraySprints(data);
+        try {
+            const data = await getAllSprints();
+            if(data) setArraySprints(data);
+        } catch (error) {
+            console.error("Error obteniendo sprints:", error);
+            Swal.fire("Error", "No se pudieron cargar los sprints", "error");
+        }
     }
 
     const createSprint = async (nuevaSprint:ISprint) => {
         agregarNuevaSprint(nuevaSprint)
         try {
-            await postNuevaSprint(nuevaSprint);
-            Swal.fire("Éxito", "Sprint creada correctamente", "success")
-        }catch (error){
+            await createSprintAPI(nuevaSprint);
+            Swal.fire("Éxito", "Sprint creado correctamente", "success")
+        } catch (error) {
             eliminarUnaSprint(nuevaSprint.id!);
-            console.log("Algo salió mal al crear la sprint")
+            console.error("Error al crear el sprint:", error);
+            Swal.fire("Error", "No se pudo crear el sprint", "error");
         }
     }
 
     const putSprintEditar = async (sprintEditada: ISprint) => {
         const estadoPrevio = sprints.find((el) => el.id === sprintEditada.id);
         
-        
-        const sprintConMismoId = {
-            ...sprintEditada,
-            id: estadoPrevio?.id
-        };
-        
-        editarUnaSprint(sprintConMismoId);
+        editarUnaSprint(sprintEditada);
         
         try {
-            await editarSprint(sprintConMismoId);
-            Swal.fire("Éxito", "Sprint actualizada correctamente", "success");
+            await updateSprint(sprintEditada);
+            Swal.fire("Éxito", "Sprint actualizado correctamente", "success");
         } catch (error) {
             if (estadoPrevio) editarUnaSprint(estadoPrevio);
-            console.log("Algo salió mal al editar");
+            console.error("Error al editar el sprint:", error);
+            Swal.fire("Error", "No se pudo actualizar el sprint", "error");
         }
     }
 
     const eliminarSprint = async (idSprint:string) => {
-
         const estadoPrevio = sprints.find((el) => el.id === idSprint)
 
         const confirm = await Swal.fire({
@@ -67,11 +70,12 @@ export const useSprints = () => {
         if (!confirm.isConfirmed) return;
         eliminarUnaSprint(idSprint)
         try {
-            await eliminarSprintPorId(idSprint);
-            Swal.fire("Eliminado", "La sprint se eliminó correctamente", "success")
+            await deleteSprintAPI(idSprint);
+            Swal.fire("Eliminado", "El sprint se eliminó correctamente", "success")
         } catch (error) {
             if (estadoPrevio) agregarNuevaSprint(estadoPrevio)
-            console.log("Algo salió mal al editar")
+            console.error("Error al eliminar el sprint:", error);
+            Swal.fire("Error", "No se pudo eliminar el sprint", "error");
         }
     }
 

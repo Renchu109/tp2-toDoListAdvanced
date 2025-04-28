@@ -29,9 +29,10 @@ const SprintList: React.FC = () => {
   };
 
   const handleEditar = (sprint: ISprint) => {
-    setSprintActiva(sprint);
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true); 
+    navigate(`/sprint/${sprint.id}`); 
+    setSprintActiva(sprint); 
+};
 
   const handleEliminar = (id: string) => {
     if (sprintActiva && sprintActiva.id === id) {
@@ -78,7 +79,7 @@ const SprintList: React.FC = () => {
             onClick={() => handleVerSprint(sprint)}
           >
             <div className={styles.sprintInfo}>
-              <div className={styles.sprintTitle}>{sprint.titulo}</div>
+              <div className={styles.sprintTitle}>{sprint.nombre}</div>
               <div className={styles.sprintDates}>
                 Inicio: {new Date(sprint.fechaInicio).toLocaleDateString()} - Cierre: {new Date(sprint.fechaCierre).toLocaleDateString()}
               </div>
